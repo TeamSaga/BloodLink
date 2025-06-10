@@ -12,7 +12,7 @@ const DashboardRedirect = () => {
       .then(({ role }) => {
         if (role === "admin") router.push("/dashboard/admin");
         else if (role === "moderator") router.push("/dashboard/moderator");
-        else if (role === "user") router.push("/dashboard/user");
+        else if (role === "user") router.push("/dashboard/donor");
         else router.push("/unauthorized");
       })
       .catch(() => router.push("/login"));
