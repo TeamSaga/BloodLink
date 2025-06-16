@@ -32,20 +32,6 @@ interface AdminStats {
     user: string;
     action: string;
   }>;
-  systemMetrics: {
-    activeUsers: number;
-    totalDonations: number;
-    emergencyRequests: number;
-    systemHealth: number;
-    serverLoad: number;
-    databaseSize: number;
-    networkStatus: string;
-    lastBackup: string;
-    securityStatus: string;
-    apiCalls: number;
-    responseTime: number;
-    errorRate: number;
-  };
   alerts: Array<{
     type: string;
     message: string;
@@ -102,7 +88,6 @@ interface AdminStats {
 const cardStyles = {
   base: 'overflow-hidden border-2 transition-all duration-300 hover:shadow-lg',
   variants: {
-    red: 'border-red-100 hover:border-red-200 dark:border-red-800 dark:hover:border-red-700',
     blue: 'border-blue-100 hover:border-blue-200 dark:border-blue-800 dark:hover:border-blue-700',
     green: 'border-green-100 hover:border-green-200 dark:border-green-800 dark:hover:border-green-700',
   },
@@ -118,20 +103,6 @@ export default function AdminDashboard() {
     activeRequests: 0,
     bloodInventory: [],
     recentActivities: [],
-    systemMetrics: {
-      activeUsers: 0,
-      totalDonations: 0,
-      emergencyRequests: 0,
-      systemHealth: 0,
-      serverLoad: 0,
-      databaseSize: 0,
-      networkStatus: '',
-      lastBackup: '',
-      securityStatus: '',
-      apiCalls: 0,
-      responseTime: 0,
-      errorRate: 0,
-    },
     alerts: [],
     donorMetrics: {
       totalDonors: 0,
@@ -165,7 +136,6 @@ export default function AdminDashboard() {
   const [selectedView, setSelectedView] = useState('overview');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true);
-  const [isAutoRefreshEnabled, setIsAutoRefreshEnabled] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('en');
   const [selectedRegion, setSelectedRegion] = useState('all');
 
@@ -244,30 +214,7 @@ export default function AdminDashboard() {
           action: 'Registration Complete',
         },
       ],
-      systemMetrics: {
-        activeUsers: 156,
-        totalDonations: 4500,
-        emergencyRequests: 8,
-        systemHealth: 98,
-        serverLoad: 45,
-        databaseSize: 2.5,
-        networkStatus: 'Optimal',
-        lastBackup: '2024-03-20T00:00:00Z',
-        securityStatus: 'Protected',
-        apiCalls: 1250,
-        responseTime: 150,
-        errorRate: 0.5,
-      },
       alerts: [
-        {
-          type: 'System Alert',
-          message: 'High server load detected',
-          priority: 'high',
-          timestamp: '2024-03-20T10:00:00Z',
-          source: 'Server Monitor',
-          category: 'Performance',
-          action: 'Investigate',
-        },
         {
           type: 'Inventory Alert',
           message: 'O- blood type running low',
@@ -276,6 +223,15 @@ export default function AdminDashboard() {
           source: 'Inventory System',
           category: 'Stock',
           action: 'Restock',
+        },
+        {
+          type: 'Emergency Request',
+          message: 'Urgent need for O- blood at City Hospital',
+          priority: 'high',
+          timestamp: '2024-03-20T10:00:00Z',
+          source: 'Request System',
+          category: 'Emergency',
+          action: 'Process',
         },
       ],
       donorMetrics: {
@@ -368,17 +324,13 @@ export default function AdminDashboard() {
     setIsNotificationsEnabled(!isNotificationsEnabled);
   };
 
-  const toggleAutoRefresh = () => {
-    setIsAutoRefreshEnabled(!isAutoRefreshEnabled);
-  };
-
   return (
     <div className={`min-h-screen ${isDarkMode ? 'dark' : ''} bg-gradient-to-br from-red-50 to-white dark:from-red-950 dark:to-gray-900`}>
       <div className="container mx-auto p-6 space-y-8">
         {/* Header with Search and Actions */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
           <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-800">
-            Moderator Dashboard
+            Admin Dashboard
           </h1>
           <div className="flex items-center gap-4">
             <div className="relative">
@@ -441,24 +393,33 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* System Health Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="transform hover:scale-105 transition-transform duration-300 hover:shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-blue-600">
                 <Users className="h-5 w-5" />
-                Active Users
+                Donor Overview
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline gap-2">
-                <p className="text-4xl font-bold">{stats.systemMetrics.activeUsers}</p>
-                <span className="text-sm text-gray-500">users</span>
+                <p className="text-4xl font-bold">{stats.donorMetrics.totalDonors}</p>
+                <span className="text-sm text-gray-500">total donors</span>
               </div>
-              <Progress value={75} className="mt-4 h-2 bg-blue-100" />
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-sm text-gray-500">Server Load</span>
-                <span className="text-sm font-semibold">{stats.systemMetrics.serverLoad}%</span>
+              <div className="mt-4 space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">Active Donors</span>
+                  <span className="font-medium">{stats.donorMetrics.activeDonors}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">New Donors</span>
+                  <span className="font-medium">{stats.donorMetrics.newDonors}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">Retention Rate</span>
+                  <span className="font-medium">{stats.donorMetrics.donorRetention}%</span>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -467,18 +428,27 @@ export default function AdminDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-green-600">
                 <Building2 className="h-5 w-5" />
-                Total Donations
+                Hospital Overview
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline gap-2">
-                <p className="text-4xl font-bold">{stats.systemMetrics.totalDonations}</p>
-                <span className="text-sm text-gray-500">units</span>
+                <p className="text-4xl font-bold">{stats.hospitalMetrics.totalHospitals}</p>
+                <span className="text-sm text-gray-500">total hospitals</span>
               </div>
-              <Progress value={60} className="mt-4 h-2 bg-green-100" />
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-sm text-gray-500">Response Time</span>
-                <span className="text-sm font-semibold">{stats.systemMetrics.responseTime}ms</span>
+              <div className="mt-4 space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">Active Hospitals</span>
+                  <span className="font-medium">{stats.hospitalMetrics.activeHospitals}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">New Hospitals</span>
+                  <span className="font-medium">{stats.hospitalMetrics.newHospitals}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">Avg. Requests</span>
+                  <span className="font-medium">{stats.hospitalMetrics.averageRequests}</span>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -492,33 +462,22 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline gap-2">
-                <p className="text-4xl font-bold">{stats.systemMetrics.emergencyRequests}</p>
-                <span className="text-sm text-gray-500">requests</span>
+                <p className="text-4xl font-bold">{stats.activeRequests}</p>
+                <span className="text-sm text-gray-500">active requests</span>
               </div>
-              <Progress value={40} className="mt-4 h-2 bg-red-100" />
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-sm text-gray-500">Error Rate</span>
-                <span className="text-sm font-semibold">{stats.systemMetrics.errorRate}%</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="transform hover:scale-105 transition-transform duration-300 hover:shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-purple-600">
-                <Activity className="h-5 w-5" />
-                System Health
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-baseline gap-2">
-                <p className="text-4xl font-bold">{stats.systemMetrics.systemHealth}%</p>
-                <span className="text-sm text-gray-500">uptime</span>
-              </div>
-              <Progress value={stats.systemMetrics.systemHealth} className="mt-4 h-2 bg-purple-100" />
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-sm text-gray-500">API Calls</span>
-                <span className="text-sm font-semibold">{stats.systemMetrics.apiCalls}</span>
+              <div className="mt-4 space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">High Priority</span>
+                  <span className="font-medium text-red-600">5</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">Medium Priority</span>
+                  <span className="font-medium text-yellow-600">4</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">Low Priority</span>
+                  <span className="font-medium text-green-600">3</span>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -708,7 +667,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Management Tools */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className={getCardClass('blue')}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -793,126 +752,6 @@ export default function AdminDashboard() {
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-500">Avg. Requests</span>
                     <span className="font-medium">{stats.hospitalMetrics.averageRequests}</span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className={getCardClass('red')}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="h-5 w-5" />
-                System Settings
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p className="text-gray-600 dark:text-gray-300">
-                  Configure system parameters, manage users, and monitor system health.
-                </p>
-                <div className="flex items-center gap-2 mt-4">
-                  <button className="p-2 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-full">
-                    <PieChart className="h-5 w-5" />
-                  </button>
-                  <button className="p-2 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-full">
-                    <LineChart className="h-5 w-5" />
-                  </button>
-                  <button className="p-2 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-full">
-                    <Activity className="h-5 w-5" />
-                  </button>
-                </div>
-                <div className="mt-4 space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Server Load</span>
-                    <span className="font-medium">{stats.systemMetrics.serverLoad}%</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Database Size</span>
-                    <span className="font-medium">{stats.systemMetrics.databaseSize}GB</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Network Status</span>
-                    <span className="font-medium">{stats.systemMetrics.networkStatus}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Last Backup</span>
-                    <span className="font-medium">
-                      {new Date(stats.systemMetrics.lastBackup).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className={getCardClass('blue')}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5" />
-                Analytics
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p className="text-gray-600 dark:text-gray-300">
-                  View detailed analytics and generate reports for better decision making.
-                </p>
-                <div className="flex items-center gap-2 mt-4">
-                  <button className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded-full">
-                    <BarChart3 className="h-5 w-5" />
-                  </button>
-                  <button className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded-full">
-                    <PieChart className="h-5 w-5" />
-                  </button>
-                  <button className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded-full">
-                    <Download className="h-5 w-5" />
-                  </button>
-                </div>
-                <div className="mt-4 space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Daily Donations</span>
-                    <span className="font-medium">
-                      {stats.analytics.dailyDonations[stats.analytics.dailyDonations.length - 1]}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Weekly Donations</span>
-                    <span className="font-medium">
-                      {stats.analytics.weeklyDonations[stats.analytics.weeklyDonations.length - 1]}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Monthly Donations</span>
-                    <span className="font-medium">
-                      {stats.analytics.monthlyDonations[stats.analytics.monthlyDonations.length - 1]}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Top Blood Type</span>
-                    <span className="font-medium">
-                      {stats.analytics.bloodTypeDistribution?.[0]?.type || 'N/A'} (
-                      {stats.analytics.bloodTypeDistribution?.[0]?.percentage || 0}%)
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Top Region</span>
-                    <span className="font-medium">
-                      {stats.analytics.locationDistribution?.[0]?.location || 'N/A'} (
-                      {stats.analytics.locationDistribution?.[0]?.percentage || 0}%)
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Coverage</span>
-                    <span className="font-medium">
-                      {Math.round(
-                        stats.analytics.locationDistribution?.reduce(
-                          (acc, loc) => acc + (loc?.percentage || 0),
-                          0
-                        ) || 0
-                      )}
-                      %
-                    </span>
                   </div>
                 </div>
               </div>
