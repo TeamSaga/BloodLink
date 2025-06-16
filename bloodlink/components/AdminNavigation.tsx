@@ -15,17 +15,15 @@ import {
   Shield,
   Bell,
   User,
-  Server,
-  Network,
-  Database,
   Globe,
   Mail,
   MessageSquare,
   HelpCircle,
   AlertCircle,
-  Key,
-  Lock,
-  Activity,
+  Megaphone,
+  DollarSign,
+  HeartHandshake,
+  AlertTriangle,
 } from 'lucide-react';
 
 export default function AdminNavigation() {
@@ -39,7 +37,7 @@ export default function AdminNavigation() {
       <Link href="/dashboard/admin" className="flex items-center gap-2 mb-8 px-2">
         <Shield className="h-8 w-8 text-purple-500" />
         <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-purple-800">
-          Moderator Portal
+          Admin Portal
         </span>
       </Link>
 
@@ -95,73 +93,43 @@ export default function AdminNavigation() {
           </Button>
         </Link>
 
-        <Link href="/dashboard/admin/security">
+        <Link href="/dashboard/admin/campaigns">
           <Button
-            variant={isActive('/dashboard/admin/security') ? 'default' : 'ghost'}
+            variant={isActive('/dashboard/admin/campaigns') ? 'default' : 'ghost'}
             className="w-full justify-start gap-2"
           >
-            <Shield className="h-5 w-5" />
-            Security
+            <Megaphone className="h-5 w-5" />
+            Campaign Management
           </Button>
         </Link>
 
-        <Link href="/dashboard/admin/roles">
+        <Link href="/dashboard/admin/donations">
           <Button
-            variant={isActive('/dashboard/admin/roles') ? 'default' : 'ghost'}
+            variant={isActive('/dashboard/admin/donations') ? 'default' : 'ghost'}
             className="w-full justify-start gap-2"
           >
-            <Key className="h-5 w-5" />
-            Role Management
+            <DollarSign className="h-5 w-5" />
+            Financial Donations
           </Button>
         </Link>
 
-        <Link href="/dashboard/admin/permissions">
+        <Link href="/dashboard/admin/donor-requests">
           <Button
-            variant={isActive('/dashboard/admin/permissions') ? 'default' : 'ghost'}
+            variant={isActive('/dashboard/admin/donor-requests') ? 'default' : 'ghost'}
             className="w-full justify-start gap-2"
           >
-            <Lock className="h-5 w-5" />
-            Permissions
+            <HeartHandshake className="h-5 w-5" />
+            Donor Requests
           </Button>
         </Link>
 
-        <Link href="/dashboard/admin/system">
+        <Link href="/dashboard/admin/disaster-requests">
           <Button
-            variant={isActive('/dashboard/admin/system') ? 'default' : 'ghost'}
+            variant={isActive('/dashboard/admin/disaster-requests') ? 'default' : 'ghost'}
             className="w-full justify-start gap-2"
           >
-            <Server className="h-5 w-5" />
-            System Status
-          </Button>
-        </Link>
-
-        <Link href="/dashboard/admin/network">
-          <Button
-            variant={isActive('/dashboard/admin/network') ? 'default' : 'ghost'}
-            className="w-full justify-start gap-2"
-          >
-            <Network className="h-5 w-5" />
-            Network
-          </Button>
-        </Link>
-
-        <Link href="/dashboard/admin/database">
-          <Button
-            variant={isActive('/dashboard/admin/database') ? 'default' : 'ghost'}
-            className="w-full justify-start gap-2"
-          >
-            <Database className="h-5 w-5" />
-            Database
-          </Button>
-        </Link>
-
-        <Link href="/dashboard/admin/logs">
-          <Button
-            variant={isActive('/dashboard/admin/logs') ? 'default' : 'ghost'}
-            className="w-full justify-start gap-2"
-          >
-            <FileText className="h-5 w-5" />
-            System Logs
+            <AlertTriangle className="h-5 w-5" />
+            Disaster Requests
           </Button>
         </Link>
 
@@ -182,16 +150,6 @@ export default function AdminNavigation() {
           >
             <MessageSquare className="h-5 w-5" />
             Communication
-          </Button>
-        </Link>
-
-        <Link href="/dashboard/admin/email">
-          <Button
-            variant={isActive('/dashboard/admin/email') ? 'default' : 'ghost'}
-            className="w-full justify-start gap-2"
-          >
-            <Mail className="h-5 w-5" />
-            Email Templates
           </Button>
         </Link>
 
@@ -222,16 +180,6 @@ export default function AdminNavigation() {
           >
             <AlertCircle className="h-5 w-5" />
             System Alerts
-          </Button>
-        </Link>
-
-        <Link href="/dashboard/admin/activity">
-          <Button
-            variant={isActive('/dashboard/admin/activity') ? 'default' : 'ghost'}
-            className="w-full justify-start gap-2"
-          >
-            <Activity className="h-5 w-5" />
-            Activity Monitor
           </Button>
         </Link>
       </div>

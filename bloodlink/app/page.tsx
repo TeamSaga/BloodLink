@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -30,7 +30,7 @@ import {
   Clock4,
   UserCircle2,
   ChevronRight,
-} from 'lucide-react';
+} from "lucide-react";
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
@@ -57,7 +57,8 @@ export default function Home() {
                       </span>
                     </h1>
                     <p className="text-xl text-gray-600 dark:text-gray-400 animate-fade-in delay-200">
-                      Join our community of life-savers. Every drop counts, every donor matters.
+                      Join our community of life-savers. Every
+          drop counts, every donor matters.
                     </p>
                   </div>
                   <div className="flex flex-col sm:flex-row gap-3 animate-slide-up delay-300">
