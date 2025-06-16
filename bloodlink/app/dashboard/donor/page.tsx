@@ -1,19 +1,27 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { MapPin, Heart, Trophy, Calendar, Bell, Activity, Droplet } from 'lucide-react';
-import DonationTracker from './components/DonationTracker';
-import RewardsSystem from './components/RewardsSystem';
-import CampaignManager from './components/CampaignManager';
-import OrganDonationAwareness from './components/OrganDonationAwareness';
-import HealthMetrics from './components/HealthMetrics';
-import BloodTypeInfo from './components/BloodTypeInfo';
-import NotificationCenter from './components/NotificationCenter';
-import DonationAnalytics from './components/DonationAnalytics';
-import { getCardClass } from '@/lib/theme';
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import {
+  MapPin,
+  Heart,
+  Trophy,
+  Calendar,
+  Bell,
+  Activity,
+  Droplet,
+} from "lucide-react";
+import DonationTracker from "./components/DonationTracker";
+import RewardsSystem from "./components/RewardsSystem";
+import CampaignManager from "./components/CampaignManager";
+import OrganDonationAwareness from "./components/OrganDonationAwareness";
+import HealthMetrics from "./components/HealthMetrics";
+import BloodTypeInfo from "./components/BloodTypeInfo";
+import NotificationCenter from "./components/NotificationCenter";
+import DonationAnalytics from "./components/DonationAnalytics";
+import { getCardClass } from "@/lib/theme";
 
 interface DonorStats {
   totalDonations: number;
@@ -23,7 +31,7 @@ interface DonorStats {
   recentAlerts: Array<{
     type: string;
     location: string;
-    urgency: 'high' | 'medium' | 'low';
+    urgency: "high" | "medium" | "low";
     timestamp: string;
   }>;
 }
@@ -33,7 +41,7 @@ function DonorDashboard() {
     totalDonations: 0,
     streak: 0,
     points: 0,
-    nextBadge: 'Bronze Donor',
+    nextBadge: "Bronze Donor",
     recentAlerts: [],
   });
 
@@ -44,23 +52,23 @@ function DonorDashboard() {
       totalDonations: 5,
       streak: 3,
       points: 750,
-      nextBadge: 'Silver Donor',
+      nextBadge: "Silver Donor",
       recentAlerts: [
         {
-          type: 'Blood Type A+ Needed',
-          location: 'City Hospital',
-          urgency: 'high',
-          timestamp: '2024-03-20T10:00:00Z',
+          type: "Blood Type A+ Needed",
+          location: "City Hospital",
+          urgency: "high",
+          timestamp: "2024-03-20T10:00:00Z",
         },
       ],
     });
   }, []);
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-white dark:from-red-950 dark:to-gray-900">
-      <div className="container mx-auto p-6 space-y-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-800">
+    <div className="h-full p-6 bg-gray-50 dark:bg-gray-950">
+      <div className="space-y-6 max-w-7xl mx-auto">
+        {" "}
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-800">
             Donor Dashboard
           </h1>
           <div className="flex items-center gap-4">
@@ -70,9 +78,8 @@ function DonorDashboard() {
             </div>
           </div>
         </div>
-        
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="transform hover:scale-105 transition-transform duration-300 hover:shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-red-600">
@@ -106,7 +113,7 @@ function DonorDashboard() {
                   <div
                     key={i}
                     className={`h-2 w-full rounded-full ${
-                      i < stats.streak ? 'bg-yellow-500' : 'bg-gray-200'
+                      i < stats.streak ? "bg-yellow-500" : "bg-gray-200"
                     }`}
                   />
                 ))}
@@ -132,7 +139,6 @@ function DonorDashboard() {
             </CardContent>
           </Card>
         </div>
-
         {/* Recent Alerts */}
         <Card className="border-l-4 border-l-red-500 hover:shadow-lg transition-shadow duration-300">
           <CardHeader>
@@ -156,7 +162,9 @@ function DonorDashboard() {
                     </p>
                   </div>
                   <Badge
-                    variant={alert.urgency === 'high' ? 'destructive' : 'default'}
+                    variant={
+                      alert.urgency === "high" ? "destructive" : "default"
+                    }
                     className="animate-pulse"
                   >
                     {alert.urgency.toUpperCase()}
@@ -165,36 +173,32 @@ function DonorDashboard() {
               ))}
             </div>
           </CardContent>
-        </Card>
-
+        </Card>{" "}
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <NotificationCenter />
           <DonationAnalytics />
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className={getCardClass('red')}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className={getCardClass("red")}>
             <DonationTracker />
           </div>
-          <div className={getCardClass('blue')}>
+          <div className={getCardClass("blue")}>
             <RewardsSystem />
           </div>
-          <div className={getCardClass('green')}>
+          <div className={getCardClass("green")}>
             <CampaignManager />
           </div>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className={getCardClass('blue')}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className={getCardClass("blue")}>
             <HealthMetrics />
           </div>
-          <div className={getCardClass('red')}>
+          <div className={getCardClass("red")}>
             <BloodTypeInfo />
           </div>
-        </div>
-
-        <div className={getCardClass('green')}>
+        </div>{" "}
+        <div className={getCardClass("green")}>
           <OrganDonationAwareness />
         </div>
       </div>
@@ -203,4 +207,3 @@ function DonorDashboard() {
 }
 
 export default DonorDashboard;
-
