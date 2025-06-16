@@ -6,6 +6,7 @@ import PublicNavigation from './PublicNavigation';
 import DonorNavigation from './DonorNavigation';
 import HospitalNavigation from './HospitalNavigation';
 import AdminNavigation from './AdminNavigation';
+import Footer from './Footer';
 import { ThemeProvider } from './theme-provider';
 
 export default function RoleBasedLayout({
@@ -93,14 +94,14 @@ export default function RoleBasedLayout({
                     {children}
                   </div>
                 </main>
-              </div>
-            ) : (
+              </div>            ) : (
               // Public layout with full-width content
               <div>
                 {getNavigation()}
                 <main className="pt-16">
                   {children}
                 </main>
+                <Footer />
               </div>
             )}
           </>
