@@ -66,7 +66,6 @@ export default function RoleBasedLayout({
 
   // Determine if we should show the dashboard layout
   const isDashboard = pathname?.startsWith("/dashboard") ?? false;
-
   return (
     <ThemeProvider
       attribute="class"
@@ -74,12 +73,11 @@ export default function RoleBasedLayout({
       enableSystem
       disableTransitionOnChange
     >
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {" "}
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 overflow-x-hidden">
         {pathname?.startsWith("/dashboard/donor") ? (
-          // Let donor layout handle navigation
-          <main className="flex-1 overflow-y-auto">
-            <div className="container mx-auto px-4 py-8">{children}</div>
-          </main>
+          // Let donor layout handle everything including navigation and containers
+          children
         ) : (
           // Other dashboards and public pages
           <>
@@ -88,8 +86,10 @@ export default function RoleBasedLayout({
                 {/* Navigation Sidebar */}
                 <div className="w-64 flex-shrink-0">{getNavigation()}</div>
                 {/* Main Content */}
-                <main className="flex-1 overflow-y-auto">
-                  <div className="container mx-auto px-4 py-8">{children}</div>
+                <main className="flex-1 overflow-hidden">
+                  <div className="h-full overflow-y-auto custom-scrollbar">
+                    <div className="max-w-none px-4 py-8">{children}</div>
+                  </div>
                 </main>
               </div>
             ) : (
