@@ -108,7 +108,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
       {/* Problem & Solution */}
       <section className="py-16 px-4 bg-white dark:bg-gray-800">
         <div className="max-w-6xl mx-auto">
@@ -153,7 +152,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
       {/* Key Features */}
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
@@ -184,7 +182,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
       {/* Statistics */}
       <section className="py-16 px-4 bg-red-600 text-white">
         <div className="max-w-4xl mx-auto">
@@ -206,7 +203,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
       {/* Implementation Roadmap */}
       <section className="py-16 px-4 bg-white dark:bg-gray-800">
         <div className="max-w-4xl mx-auto">
@@ -265,7 +261,9 @@ export default function AboutPage() {
               </CardContent>
             </Card>
           </div>
-        </div>      </section>      {/* Call to Action */}
+        </div>{" "}
+      </section>{" "}
+      {/* Call to Action */}
       <section className="py-16 px-4 bg-gradient-to-r from-red-600 to-pink-600 text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4">

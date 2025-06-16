@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function CookiePolicy() {
   return (
@@ -21,9 +21,10 @@ export default function CookiePolicy() {
           </CardHeader>
           <CardContent>
             <p className="text-gray-600 dark:text-gray-300">
-              Cookies are small text files that are stored on your device when you visit our website. 
-              They help us provide you with a better experience by remembering your preferences and 
-              improving the functionality of our platform.
+              Cookies are small text files that are stored on your device when
+              you visit our website. They help us provide you with a better
+              experience by remembering your preferences and improving the
+              functionality of our platform.
             </p>
           </CardContent>
         </Card>
@@ -34,21 +35,30 @@ export default function CookiePolicy() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h4 className="font-semibold text-gray-900 dark:text-white">Essential Cookies</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white">
+                Essential Cookies
+              </h4>
               <p className="text-gray-600 dark:text-gray-300">
-                Required for the platform to function properly, including authentication and security.
+                Required for the platform to function properly, including
+                authentication and security.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold text-gray-900 dark:text-white">Functional Cookies</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white">
+                Functional Cookies
+              </h4>
               <p className="text-gray-600 dark:text-gray-300">
-                Remember your preferences and settings to enhance your user experience.
+                Remember your preferences and settings to enhance your user
+                experience.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold text-gray-900 dark:text-white">Analytics Cookies</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white">
+                Analytics Cookies
+              </h4>
               <p className="text-gray-600 dark:text-gray-300">
-                Help us understand how users interact with our platform to improve our services.
+                Help us understand how users interact with our platform to
+                improve our services.
               </p>
             </div>
           </CardContent>
@@ -60,9 +70,10 @@ export default function CookiePolicy() {
           </CardHeader>
           <CardContent>
             <p className="text-gray-600 dark:text-gray-300">
-              You can control and manage cookies through your browser settings. However, disabling certain 
-              cookies may affect the functionality of BloodLink. Essential cookies cannot be disabled as 
-              they are necessary for the platform to operate.
+              You can control and manage cookies through your browser settings.
+              However, disabling certain cookies may affect the functionality of
+              BloodLink. Essential cookies cannot be disabled as they are
+              necessary for the platform to operate.
             </p>
           </CardContent>
         </Card>
@@ -73,7 +84,8 @@ export default function CookiePolicy() {
           </CardHeader>
           <CardContent>
             <p className="text-gray-600 dark:text-gray-300">
-              If you have any questions about our use of cookies, please contact us at privacy@bloodlink.lk.
+              If you have any questions about our use of cookies, please contact
+              us at privacy@bloodlink.lk.
             </p>
           </CardContent>
         </Card>

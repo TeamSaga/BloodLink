@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function TermsOfService() {
   return (
@@ -21,9 +21,10 @@ export default function TermsOfService() {
           </CardHeader>
           <CardContent>
             <p className="text-gray-600 dark:text-gray-300">
-              By accessing and using BloodLink, you accept and agree to be bound by the terms and provision 
-              of this agreement. These terms apply to all users of the platform, including donors, hospitals, 
-              and healthcare organizations.
+              By accessing and using BloodLink, you accept and agree to be bound
+              by the terms and provision of this agreement. These terms apply to
+              all users of the platform, including donors, hospitals, and
+              healthcare organizations.
             </p>
           </CardContent>
         </Card>
@@ -33,11 +34,18 @@ export default function TermsOfService() {
             <CardTitle>User Responsibilities</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-gray-600 dark:text-gray-300">As a user of BloodLink, you agree to:</p>
+            <p className="text-gray-600 dark:text-gray-300">
+              As a user of BloodLink, you agree to:
+            </p>
             <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
-              <li>Provide accurate and truthful information about your medical history and eligibility</li>
+              <li>
+                Provide accurate and truthful information about your medical
+                history and eligibility
+              </li>
               <li>Update your information when circumstances change</li>
-              <li>Use the platform only for legitimate donation-related activities</li>
+              <li>
+                Use the platform only for legitimate donation-related activities
+              </li>
               <li>Respect the privacy and safety of other users</li>
               <li>Follow all applicable laws and medical guidelines</li>
             </ul>
@@ -50,10 +58,11 @@ export default function TermsOfService() {
           </CardHeader>
           <CardContent>
             <p className="text-gray-600 dark:text-gray-300">
-              BloodLink is a platform that connects donors with healthcare organizations. We do not provide 
-              medical advice, diagnosis, or treatment. All medical decisions should be made in consultation 
-              with qualified healthcare professionals. Users must meet all medical eligibility requirements 
-              before donating.
+              BloodLink is a platform that connects donors with healthcare
+              organizations. We do not provide medical advice, diagnosis, or
+              treatment. All medical decisions should be made in consultation
+              with qualified healthcare professionals. Users must meet all
+              medical eligibility requirements before donating.
             </p>
           </CardContent>
         </Card>
@@ -64,9 +73,10 @@ export default function TermsOfService() {
           </CardHeader>
           <CardContent>
             <p className="text-gray-600 dark:text-gray-300">
-              BloodLink shall not be liable for any indirect, incidental, special, consequential, or punitive 
-              damages resulting from your use of the platform. Our liability is limited to the maximum extent 
-              permitted by law.
+              BloodLink shall not be liable for any indirect, incidental,
+              special, consequential, or punitive damages resulting from your
+              use of the platform. Our liability is limited to the maximum
+              extent permitted by law.
             </p>
           </CardContent>
         </Card>
@@ -77,8 +87,8 @@ export default function TermsOfService() {
           </CardHeader>
           <CardContent>
             <p className="text-gray-600 dark:text-gray-300">
-              For questions about these Terms of Service, please contact us at legal@bloodlink.lk 
-              or through our contact page.
+              For questions about these Terms of Service, please contact us at
+              legal@bloodlink.lk or through our contact page.
             </p>
           </CardContent>
         </Card>
