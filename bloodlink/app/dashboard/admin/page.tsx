@@ -378,7 +378,7 @@ export default function AdminDashboard() {
         {/* Header with Search and Actions */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
           <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-800">
-            Admin Dashboard
+            Moderator Dashboard
           </h1>
           <div className="flex items-center gap-4">
             <div className="relative">

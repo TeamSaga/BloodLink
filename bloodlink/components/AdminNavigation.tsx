@@ -39,7 +39,7 @@ export default function AdminNavigation() {
       <Link href="/dashboard/admin" className="flex items-center gap-2 mb-8 px-2">
         <Shield className="h-8 w-8 text-purple-500" />
         <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-purple-800">
-          Admin Portal
+          Moderator Portal
         </span>
       </Link>
 
