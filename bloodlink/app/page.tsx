@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Heart,
   Droplet,
@@ -12,7 +12,7 @@ import {
   Clock,
   MapPin,
   Bell,
-} from 'lucide-react';
+} from "lucide-react";
 
 export default function Home() {
   return (
@@ -23,7 +23,8 @@ export default function Home() {
           Save Lives Through Blood Donation
         </h1>
         <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-          Join our mission to connect blood donors with those in need. Every donation counts, and you can be someone's hero today.
+          Join our mission to connect blood donors with those in need. Every
+          donation counts, and you can be someone's hero today.
         </p>
         <div className="flex gap-4 justify-center">
           <Link href="/login">
