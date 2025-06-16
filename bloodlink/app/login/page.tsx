@@ -54,6 +54,7 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="email"
                 className="w-full px-3 py-2 border rounded-full text-gray-600"
               />
             </div>
@@ -67,8 +68,14 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="current-password"
                 className="w-full px-3 py-2 border rounded-full text-gray-600"
               />
+              <div className="text-right mt-1">
+                <Link href="/forgot-password" className="text-sm text-blue-500 hover:underline">
+                  Forgot Password?
+                </Link>
+              </div>
             </div>
             <div className="pt-8">
               <button
@@ -80,7 +87,7 @@ export default function Login() {
             </div>
 
             <p className="mt-4 text-sm text-center text-gray-600">
-              Dont't have an account?{" "}
+              Don't have an account?{" "}
               <Link href="/signup" className="text-blue-500 hover:underline">
                 Sign Up
               </Link>
