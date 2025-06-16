@@ -28,7 +28,7 @@ interface DonorStats {
   }>;
 }
 
-export default function DonorDashboard() {
+function DonorDashboard() {
   const [stats, setStats] = useState<DonorStats>({
     totalDonations: 0,
     streak: 0,
@@ -201,3 +201,5 @@ export default function DonorDashboard() {
     </div>
   );
 }
+
+export default DonorDashboard;

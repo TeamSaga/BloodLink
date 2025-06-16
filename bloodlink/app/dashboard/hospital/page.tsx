@@ -4,12 +4,11 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Users, Building2, Droplet, AlertTriangle, Activity, Settings, Shield, Search, Filter, Download, Upload, BarChart3, PieChart, LineChart, Calendar, Bell, Mail, UserPlus, UserMinus, RefreshCw, MapPin, Clock, CheckCircle, XCircle, TrendingUp, TrendingDown, AlertCircle, FileText, Database, Server, Network, Zap, Lock, Unlock, Eye, EyeOff, BellRing, BellOff, Settings2, Users2, Building, Heart, Sun, Moon, Cloud, CloudOff, Wind, Droplets, Thermometer, Gauge, Cpu, HardDrive, Wifi, Signal, SignalHigh, SignalMedium, SignalLow, SignalZero, Battery, BatteryCharging, Power, PowerOff } from 'lucide-react';
+import { Building2, Droplet, AlertTriangle, Activity, Users, Calendar, Bell, Search, Filter, Download, Upload, BarChart3, PieChart, LineChart, Mail, Plus, Minus, RefreshCw, MapPin, Clock, CheckCircle, XCircle, TrendingUp, TrendingDown, AlertCircle, FileText, Database, Server, Network, Zap, Lock, Unlock, Eye, EyeOff, BellRing, BellOff, Settings2, Users2, Building, Heart, Sun, Moon, Cloud, CloudOff, Wind, Droplets, Thermometer, Gauge, Cpu, HardDrive, Wifi, Signal, SignalHigh, SignalMedium, SignalLow, SignalZero, Battery, BatteryCharging, Power, PowerOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface AdminStats {
+interface HospitalStats {
   totalDonors: number;
-  totalHospitals: number;
   activeRequests: number;
   bloodInventory: {
     type: string;
@@ -21,15 +20,49 @@ interface AdminStats {
     expiryDate: string;
     temperature: number;
     storageCondition: string;
+    batchNumber: string;
+    donorInfo: {
+      id: string;
+      name: string;
+      bloodType: string;
+      donationDate: string;
+    };
   }[];
-  recentActivities: Array<{
-    type: string;
-    description: string;
+  recentRequests: Array<{
+    id: string;
+    bloodType: string;
+    quantity: number;
+    urgency: 'high' | 'medium' | 'low';
+    status: 'pending' | 'approved' | 'completed' | 'cancelled';
     timestamp: string;
-    severity: 'high' | 'medium' | 'low';
-    status: 'pending' | 'completed' | 'cancelled';
-    location: string;
-    user: string;
+    patientInfo: string;
+    doctor: string;
+    department: string;
+    priority: number;
+    notes: string;
+  }>;
+  donorMetrics: {
+    totalDonors: number;
+    activeDonors: number;
+    scheduledDonations: number;
+    lastDonation: string;
+    donorRetention: number;
+    averageDonations: number;
+    topDonors: Array<{
+      name: string;
+      donations: number;
+      lastDonation: string;
+      bloodType: string;
+      contact: string;
+    }>;
+  };
+  alerts: Array<{
+    type: string;
+    message: string;
+    priority: 'high' | 'medium' | 'low';
+    timestamp: string;
+    source: string;
+    category: string;
     action: string;
   }>;
   systemMetrics: {
@@ -45,40 +78,6 @@ interface AdminStats {
     apiCalls: number;
     responseTime: number;
     errorRate: number;
-  };
-  alerts: Array<{
-    type: string;
-    message: string;
-    priority: 'high' | 'medium' | 'low';
-    timestamp: string;
-    source: string;
-    category: string;
-    action: string;
-  }>;
-  donorMetrics: {
-    totalDonors: number;
-    activeDonors: number;
-    newDonors: number;
-    donorRetention: number;
-    averageDonations: number;
-    topDonors: Array<{
-      name: string;
-      donations: number;
-      lastDonation: string;
-      bloodType: string;
-    }>;
-  };
-  hospitalMetrics: {
-    totalHospitals: number;
-    activeHospitals: number;
-    newHospitals: number;
-    averageRequests: number;
-    topHospitals: Array<{
-      name: string;
-      requests: number;
-      lastRequest: string;
-      location: string;
-    }>;
   };
   analytics: {
     dailyDonations: number[];
@@ -96,6 +95,12 @@ interface AdminStats {
       date: string;
       requests: number;
     }[];
+    departmentStats: {
+      name: string;
+      requests: number;
+      fulfilled: number;
+      pending: number;
+    }[];
   };
 }
 
@@ -111,13 +116,22 @@ const cardStyles = {
 const getCardClass = (variant: keyof typeof cardStyles.variants) =>
   cn(cardStyles.base, cardStyles.variants[variant]);
 
-export default function AdminDashboard() {
-  const [stats, setStats] = useState<AdminStats>({
+export default function HospitalDashboard() {
+  const [stats, setStats] = useState<HospitalStats>({
     totalDonors: 0,
-    totalHospitals: 0,
     activeRequests: 0,
     bloodInventory: [],
-    recentActivities: [],
+    recentRequests: [],
+    donorMetrics: {
+      totalDonors: 0,
+      activeDonors: 0,
+      scheduledDonations: 0,
+      lastDonation: '',
+      donorRetention: 0,
+      averageDonations: 0,
+      topDonors: [],
+    },
+    alerts: [],
     systemMetrics: {
       activeUsers: 0,
       totalDonations: 0,
@@ -132,22 +146,6 @@ export default function AdminDashboard() {
       responseTime: 0,
       errorRate: 0,
     },
-    alerts: [],
-    donorMetrics: {
-      totalDonors: 0,
-      activeDonors: 0,
-      newDonors: 0,
-      donorRetention: 0,
-      averageDonations: 0,
-      topDonors: [],
-    },
-    hospitalMetrics: {
-      totalHospitals: 0,
-      activeHospitals: 0,
-      newHospitals: 0,
-      averageRequests: 0,
-      topHospitals: [],
-    },
     analytics: {
       dailyDonations: [],
       weeklyDonations: [],
@@ -155,6 +153,7 @@ export default function AdminDashboard() {
       bloodTypeDistribution: [],
       locationDistribution: [],
       requestTrends: [],
+      departmentStats: [],
     },
   });
 
@@ -166,16 +165,15 @@ export default function AdminDashboard() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true);
   const [isAutoRefreshEnabled, setIsAutoRefreshEnabled] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
-  const [selectedRegion, setSelectedRegion] = useState('all');
+  const [selectedDepartment, setSelectedDepartment] = useState('all');
+  const [selectedBloodType, setSelectedBloodType] = useState('all');
 
   useEffect(() => {
-    // TODO: Fetch admin stats from API
+    // TODO: Fetch hospital stats from API
     // This is mock data for now
     setStats({
-      totalDonors: 1250,
-      totalHospitals: 45,
-      activeRequests: 12,
+      totalDonors: 250,
+      activeRequests: 5,
       bloodInventory: [
         {
           type: 'A+',
@@ -187,6 +185,13 @@ export default function AdminDashboard() {
           expiryDate: '2024-04-20',
           temperature: 4,
           storageCondition: 'Optimal',
+          batchNumber: 'BATCH001',
+          donorInfo: {
+            id: 'DON001',
+            name: 'John Smith',
+            bloodType: 'A+',
+            donationDate: '2024-03-15',
+          },
         },
         {
           type: 'B+',
@@ -198,6 +203,13 @@ export default function AdminDashboard() {
           expiryDate: '2024-04-15',
           temperature: 4,
           storageCondition: 'Optimal',
+          batchNumber: 'BATCH002',
+          donorInfo: {
+            id: 'DON002',
+            name: 'Sarah Johnson',
+            bloodType: 'B+',
+            donationDate: '2024-03-14',
+          },
         },
         {
           type: 'O-',
@@ -209,6 +221,13 @@ export default function AdminDashboard() {
           expiryDate: '2024-04-10',
           temperature: 4,
           storageCondition: 'Optimal',
+          batchNumber: 'BATCH003',
+          donorInfo: {
+            id: 'DON003',
+            name: 'Michael Brown',
+            bloodType: 'O-',
+            donationDate: '2024-03-13',
+          },
         },
         {
           type: 'AB+',
@@ -220,68 +239,48 @@ export default function AdminDashboard() {
           expiryDate: '2024-04-25',
           temperature: 4,
           storageCondition: 'Optimal',
+          batchNumber: 'BATCH004',
+          donorInfo: {
+            id: 'DON004',
+            name: 'Emily Davis',
+            bloodType: 'AB+',
+            donationDate: '2024-03-12',
+          },
         },
       ],
-      recentActivities: [
+      recentRequests: [
         {
-          type: 'Emergency Request',
-          description: 'City Hospital requested 5 units of O- blood',
-          timestamp: '2024-03-20T10:00:00Z',
-          severity: 'high',
+          id: 'REQ001',
+          bloodType: 'O-',
+          quantity: 5,
+          urgency: 'high',
           status: 'pending',
-          location: 'City Hospital',
-          user: 'Dr. Smith',
-          action: 'Request Created',
-        },
-        {
-          type: 'New Donor Registration',
-          description: 'John Doe registered as a new donor',
-          timestamp: '2024-03-20T09:45:00Z',
-          severity: 'low',
-          status: 'completed',
-          location: 'Online Registration',
-          user: 'John Doe',
-          action: 'Registration Complete',
-        },
-      ],
-      systemMetrics: {
-        activeUsers: 156,
-        totalDonations: 4500,
-        emergencyRequests: 8,
-        systemHealth: 98,
-        serverLoad: 45,
-        databaseSize: 2.5,
-        networkStatus: 'Optimal',
-        lastBackup: '2024-03-20T00:00:00Z',
-        securityStatus: 'Protected',
-        apiCalls: 1250,
-        responseTime: 150,
-        errorRate: 0.5,
-      },
-      alerts: [
-        {
-          type: 'System Alert',
-          message: 'High server load detected',
-          priority: 'high',
           timestamp: '2024-03-20T10:00:00Z',
-          source: 'Server Monitor',
-          category: 'Performance',
-          action: 'Investigate',
+          patientInfo: 'Emergency Surgery - John Doe',
+          doctor: 'Dr. Smith',
+          department: 'Emergency',
+          priority: 1,
+          notes: 'Urgent surgery scheduled for 2 PM',
         },
         {
-          type: 'Inventory Alert',
-          message: 'O- blood type running low',
-          priority: 'high',
+          id: 'REQ002',
+          bloodType: 'A+',
+          quantity: 3,
+          urgency: 'medium',
+          status: 'approved',
           timestamp: '2024-03-20T09:30:00Z',
-          source: 'Inventory System',
-          category: 'Stock',
-          action: 'Restock',
+          patientInfo: 'Regular Transfusion - Jane Smith',
+          doctor: 'Dr. Johnson',
+          department: 'Hematology',
+          priority: 2,
+          notes: 'Regular transfusion for anemia treatment',
         },
       ],
       donorMetrics: {
-        totalDonors: 1250,
-        activeDonors: 980,
-        newDonors: 45,
+        totalDonors: 250,
+        activeDonors: 180,
+        scheduledDonations: 15,
+        lastDonation: '2024-03-19T15:30:00Z',
         donorRetention: 85,
         averageDonations: 3.5,
         topDonors: [
@@ -290,39 +289,55 @@ export default function AdminDashboard() {
             donations: 15,
             lastDonation: '2024-03-15',
             bloodType: 'O+',
+            contact: '+1 234-567-8901',
           },
           {
             name: 'Sarah Johnson',
             donations: 12,
             lastDonation: '2024-03-10',
             bloodType: 'A-',
+            contact: '+1 234-567-8902',
           },
         ],
       },
-      hospitalMetrics: {
-        totalHospitals: 45,
-        activeHospitals: 42,
-        newHospitals: 3,
-        averageRequests: 25,
-        topHospitals: [
-          {
-            name: 'City General Hospital',
-            requests: 150,
-            lastRequest: '2024-03-20',
-            location: 'Downtown',
-          },
-          {
-            name: 'St. Mary\'s Medical Center',
-            requests: 120,
-            lastRequest: '2024-03-19',
-            location: 'Westside',
-          },
-        ],
+      alerts: [
+        {
+          type: 'Inventory Alert',
+          message: 'O- blood type running low',
+          priority: 'high',
+          timestamp: '2024-03-20T10:00:00Z',
+          source: 'Inventory System',
+          category: 'Stock',
+          action: 'Restock',
+        },
+        {
+          type: 'Donation Reminder',
+          message: '5 donors scheduled for tomorrow',
+          priority: 'medium',
+          timestamp: '2024-03-20T09:30:00Z',
+          source: 'Scheduling System',
+          category: 'Donations',
+          action: 'Review',
+        },
+      ],
+      systemMetrics: {
+        activeUsers: 45,
+        totalDonations: 1200,
+        emergencyRequests: 8,
+        systemHealth: 98,
+        serverLoad: 35,
+        databaseSize: 1.5,
+        networkStatus: 'Optimal',
+        lastBackup: '2024-03-20T00:00:00Z',
+        securityStatus: 'Protected',
+        apiCalls: 850,
+        responseTime: 120,
+        errorRate: 0.3,
       },
       analytics: {
-        dailyDonations: [25, 30, 28, 35, 32, 40, 38],
-        weeklyDonations: [180, 195, 210, 225, 240, 255, 270],
-        monthlyDonations: [850, 900, 950, 1000, 1050, 1100],
+        dailyDonations: [15, 20, 18, 25, 22, 30, 28],
+        weeklyDonations: [120, 135, 150, 165, 180, 195, 210],
+        monthlyDonations: [550, 600, 650, 700, 750, 800],
         bloodTypeDistribution: [
           { type: 'A+', percentage: 30 },
           { type: 'B+', percentage: 25 },
@@ -340,13 +355,33 @@ export default function AdminDashboard() {
           { location: 'Central', percentage: 10 },
         ],
         requestTrends: [
-          { date: '2024-03-14', requests: 25 },
-          { date: '2024-03-15', requests: 30 },
-          { date: '2024-03-16', requests: 28 },
-          { date: '2024-03-17', requests: 35 },
-          { date: '2024-03-18', requests: 32 },
-          { date: '2024-03-19', requests: 40 },
-          { date: '2024-03-20', requests: 38 },
+          { date: '2024-03-14', requests: 15 },
+          { date: '2024-03-15', requests: 20 },
+          { date: '2024-03-16', requests: 18 },
+          { date: '2024-03-17', requests: 25 },
+          { date: '2024-03-18', requests: 22 },
+          { date: '2024-03-19', requests: 30 },
+          { date: '2024-03-20', requests: 28 },
+        ],
+        departmentStats: [
+          {
+            name: 'Emergency',
+            requests: 50,
+            fulfilled: 45,
+            pending: 5,
+          },
+          {
+            name: 'Surgery',
+            requests: 40,
+            fulfilled: 38,
+            pending: 2,
+          },
+          {
+            name: 'Hematology',
+            requests: 30,
+            fulfilled: 28,
+            pending: 2,
+          },
         ],
       },
     });
@@ -378,7 +413,7 @@ export default function AdminDashboard() {
         {/* Header with Search and Actions */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
           <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-800">
-            Admin Dashboard
+            Hospital Dashboard
           </h1>
           <div className="flex items-center gap-4">
             <div className="relative">
@@ -397,10 +432,9 @@ export default function AdminDashboard() {
               onChange={(e) => setSelectedFilter(e.target.value)}
             >
               <option value="all">All</option>
-              <option value="donors">Donors</option>
-              <option value="hospitals">Hospitals</option>
-              <option value="requests">Requests</option>
               <option value="inventory">Inventory</option>
+              <option value="requests">Requests</option>
+              <option value="donors">Donors</option>
               <option value="analytics">Analytics</option>
             </select>
             <select
@@ -435,30 +469,30 @@ export default function AdminDashboard() {
               {isNotificationsEnabled ? <BellRing className="h-5 w-5" /> : <BellOff className="h-5 w-5" />}
             </button>
             <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-full shadow-md">
-              <Shield className="h-5 w-5 text-red-500" />
-              <span className="font-semibold">Admin Panel</span>
+              <Building2 className="h-5 w-5 text-red-500" />
+              <span className="font-semibold">City Hospital</span>
             </div>
           </div>
         </div>
 
-        {/* System Health Overview */}
+        {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="transform hover:scale-105 transition-transform duration-300 hover:shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-blue-600">
                 <Users className="h-5 w-5" />
-                Active Users
+                Total Donors
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline gap-2">
-                <p className="text-4xl font-bold">{stats.systemMetrics.activeUsers}</p>
-                <span className="text-sm text-gray-500">users</span>
+                <p className="text-4xl font-bold">{stats.donorMetrics.totalDonors}</p>
+                <span className="text-sm text-gray-500">donors</span>
               </div>
               <Progress value={75} className="mt-4 h-2 bg-blue-100" />
               <div className="flex items-center justify-between mt-2">
-                <span className="text-sm text-gray-500">Server Load</span>
-                <span className="text-sm font-semibold">{stats.systemMetrics.serverLoad}%</span>
+                <span className="text-sm text-gray-500">Active Donors</span>
+                <span className="text-sm font-semibold">{stats.donorMetrics.activeDonors}</span>
               </div>
             </CardContent>
           </Card>
@@ -466,19 +500,21 @@ export default function AdminDashboard() {
           <Card className="transform hover:scale-105 transition-transform duration-300 hover:shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-green-600">
-                <Building2 className="h-5 w-5" />
-                Total Donations
+                <Calendar className="h-5 w-5" />
+                Scheduled Donations
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline gap-2">
-                <p className="text-4xl font-bold">{stats.systemMetrics.totalDonations}</p>
-                <span className="text-sm text-gray-500">units</span>
+                <p className="text-4xl font-bold">{stats.donorMetrics.scheduledDonations}</p>
+                <span className="text-sm text-gray-500">upcoming</span>
               </div>
               <Progress value={60} className="mt-4 h-2 bg-green-100" />
               <div className="flex items-center justify-between mt-2">
-                <span className="text-sm text-gray-500">Response Time</span>
-                <span className="text-sm font-semibold">{stats.systemMetrics.responseTime}ms</span>
+                <span className="text-sm text-gray-500">Last Donation</span>
+                <span className="text-sm font-semibold">
+                  {new Date(stats.donorMetrics.lastDonation).toLocaleDateString()}
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -487,18 +523,18 @@ export default function AdminDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-red-600">
                 <AlertTriangle className="h-5 w-5" />
-                Emergency Requests
+                Active Requests
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline gap-2">
-                <p className="text-4xl font-bold">{stats.systemMetrics.emergencyRequests}</p>
+                <p className="text-4xl font-bold">{stats.activeRequests}</p>
                 <span className="text-sm text-gray-500">requests</span>
               </div>
               <Progress value={40} className="mt-4 h-2 bg-red-100" />
               <div className="flex items-center justify-between mt-2">
-                <span className="text-sm text-gray-500">Error Rate</span>
-                <span className="text-sm font-semibold">{stats.systemMetrics.errorRate}%</span>
+                <span className="text-sm text-gray-500">Emergency</span>
+                <span className="text-sm font-semibold">{stats.systemMetrics.emergencyRequests}</span>
               </div>
             </CardContent>
           </Card>
@@ -517,8 +553,8 @@ export default function AdminDashboard() {
               </div>
               <Progress value={stats.systemMetrics.systemHealth} className="mt-4 h-2 bg-purple-100" />
               <div className="flex items-center justify-between mt-2">
-                <span className="text-sm text-gray-500">API Calls</span>
-                <span className="text-sm font-semibold">{stats.systemMetrics.apiCalls}</span>
+                <span className="text-sm text-gray-500">Response Time</span>
+                <span className="text-sm font-semibold">{stats.systemMetrics.responseTime}ms</span>
               </div>
             </CardContent>
           </Card>
@@ -598,6 +634,14 @@ export default function AdminDashboard() {
                       <span className="text-gray-500">Storage</span>
                       <span className="font-medium">{item.storageCondition}</span>
                     </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-500">Batch</span>
+                      <span className="font-medium">{item.batchNumber}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-500">Donor</span>
+                      <span className="font-medium">{item.donorInfo.name}</span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -605,13 +649,81 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        {/* Alerts and Recent Activities */}
+        {/* Recent Requests and Alerts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="border-l-4 border-l-blue-500 hover:shadow-lg transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-blue-600">
+                <Activity className="h-5 w-5" />
+                Recent Requests
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {stats.recentRequests.map((request) => (
+                  <div
+                    key={request.id}
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200"
+                  >
+                    <div>
+                      <h3 className="font-semibold">{request.patientInfo}</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-sm text-gray-500 flex items-center gap-1">
+                          <Droplet className="h-4 w-4" />
+                          {request.bloodType}
+                        </span>
+                        <span className="text-sm text-gray-500 flex items-center gap-1">
+                          <Clock className="h-4 w-4" />
+                          {new Date(request.timestamp).toLocaleTimeString()}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="text-xs text-gray-500">{request.doctor}</span>
+                        <span className="text-xs text-gray-500">•</span>
+                        <span className="text-xs text-gray-500">{request.department}</span>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-2">{request.notes}</p>
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant={
+                            request.urgency === 'high'
+                              ? 'destructive'
+                              : request.urgency === 'medium'
+                              ? 'secondary'
+                              : 'default'
+                          }
+                        >
+                          {request.urgency.toUpperCase()}
+                        </Badge>
+                        <Badge
+                          variant={
+                            request.status === 'completed'
+                              ? 'default'
+                              : request.status === 'cancelled'
+                              ? 'destructive'
+                              : request.status === 'approved'
+                              ? 'secondary'
+                              : 'default'
+                          }
+                        >
+                          {request.status.toUpperCase()}
+                        </Badge>
+                      </div>
+                      <span className="text-xs text-gray-500">Priority: {request.priority}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
           <Card className="border-l-4 border-l-yellow-500 hover:shadow-lg transition-shadow duration-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-yellow-600">
                 <Bell className="h-5 w-5" />
-                System Alerts
+                Alerts & Notifications
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -649,62 +761,6 @@ export default function AdminDashboard() {
               </div>
             </CardContent>
           </Card>
-
-          <Card className="border-l-4 border-l-blue-500 hover:shadow-lg transition-shadow duration-300">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-blue-600">
-                <Activity className="h-5 w-5" />
-                Recent Activities
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {stats.recentActivities.map((activity, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200"
-                  >
-                    <div>
-                      <h3 className="font-semibold">{activity.type}</h3>
-                      <p className="text-sm text-gray-500">{activity.description}</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="text-xs text-gray-500">{activity.location}</span>
-                        <span className="text-xs text-gray-500">•</span>
-                        <span className="text-xs text-gray-500">{activity.user}</span>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-2">
-                      <div className="flex items-center gap-2">
-                        <Badge
-                          variant={
-                            activity.severity === 'high'
-                              ? 'destructive'
-                              : activity.severity === 'medium'
-                              ? 'secondary'
-                              : 'default'
-                          }
-                        >
-                          {activity.severity.toUpperCase()}
-                        </Badge>
-                        <Badge
-                          variant={
-                            activity.status === 'completed'
-                              ? 'default'
-                              : activity.status === 'cancelled'
-                              ? 'destructive'
-                              : 'secondary'
-                          }
-                        >
-                          {activity.status.toUpperCase()}
-                        </Badge>
-                      </div>
-                      <span className="text-xs text-gray-500">{activity.action}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Management Tools */}
@@ -719,14 +775,14 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="space-y-2">
                 <p className="text-gray-600 dark:text-gray-300">
-                  Manage donor profiles, verify donations, and track donor history.
+                  Manage donor profiles, schedule donations, and track donor history.
                 </p>
                 <div className="flex items-center gap-2 mt-4">
                   <button className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded-full">
-                    <UserPlus className="h-5 w-5" />
+                    <Plus className="h-5 w-5" />
                   </button>
                   <button className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded-full">
-                    <UserMinus className="h-5 w-5" />
+                    <Calendar className="h-5 w-5" />
                   </button>
                   <button className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded-full">
                     <Mail className="h-5 w-5" />
@@ -742,11 +798,11 @@ export default function AdminDashboard() {
                     <span className="font-medium">{stats.donorMetrics.activeDonors}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">New Donors</span>
-                    <span className="font-medium">{stats.donorMetrics.newDonors}</span>
+                    <span className="text-gray-500">Scheduled</span>
+                    <span className="font-medium">{stats.donorMetrics.scheduledDonations}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Retention Rate</span>
+                    <span className="text-gray-500">Retention</span>
                     <span className="font-medium">{stats.donorMetrics.donorRetention}%</span>
                   </div>
                 </div>
@@ -757,42 +813,55 @@ export default function AdminDashboard() {
           <Card className={getCardClass('green')}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Building2 className="h-5 w-5" />
-                Hospital Management
+                <Droplet className="h-5 w-5" />
+                Blood Requests
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 <p className="text-gray-600 dark:text-gray-300">
-                  Manage partner hospitals, blood requests, and inventory distribution.
+                  Create and manage blood requests, track status, and handle emergencies.
                 </p>
                 <div className="flex items-center gap-2 mt-4">
                   <button className="p-2 hover:bg-green-100 dark:hover:bg-green-900/20 rounded-full">
-                    <BarChart3 className="h-5 w-5" />
+                    <Plus className="h-5 w-5" />
                   </button>
                   <button className="p-2 hover:bg-green-100 dark:hover:bg-green-900/20 rounded-full">
-                    <Calendar className="h-5 w-5" />
+                    <CheckCircle className="h-5 w-5" />
                   </button>
                   <button className="p-2 hover:bg-green-100 dark:hover:bg-green-900/20 rounded-full">
-                    <Filter className="h-5 w-5" />
+                    <XCircle className="h-5 w-5" />
                   </button>
                 </div>
                 <div className="mt-4 space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Total Hospitals</span>
-                    <span className="font-medium">{stats.hospitalMetrics.totalHospitals}</span>
+                    <span className="text-gray-500">Active Requests</span>
+                    <span className="font-medium">{stats.activeRequests}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Active Hospitals</span>
-                    <span className="font-medium">{stats.hospitalMetrics.activeHospitals}</span>
+                    <span className="text-gray-500">Emergency</span>
+                    <span className="font-medium">{stats.systemMetrics.emergencyRequests}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">New Hospitals</span>
-                    <span className="font-medium">{stats.hospitalMetrics.newHospitals}</span>
+                    <span className="text-gray-500">Departments</span>
+                    <span className="font-medium">{stats.analytics.departmentStats.length}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Avg. Requests</span>
-                    <span className="font-medium">{stats.hospitalMetrics.averageRequests}</span>
+                    <span className="text-gray-500">Success Rate</span>
+                    <span className="font-medium">
+                      {Math.round(
+                        (stats.analytics.departmentStats.reduce(
+                          (acc, dept) => acc + dept.fulfilled,
+                          0
+                        ) /
+                          stats.analytics.departmentStats.reduce(
+                            (acc, dept) => acc + dept.requests,
+                            0
+                          )) *
+                          100
+                      )}
+                      %
+                    </span>
                   </div>
                 </div>
               </div>
@@ -802,43 +871,49 @@ export default function AdminDashboard() {
           <Card className={getCardClass('red')}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Settings className="h-5 w-5" />
-                System Settings
+                <Activity className="h-5 w-5" />
+                Inventory Management
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 <p className="text-gray-600 dark:text-gray-300">
-                  Configure system parameters, manage users, and monitor system health.
+                  Monitor blood inventory, manage stock levels, and track usage.
                 </p>
                 <div className="flex items-center gap-2 mt-4">
                   <button className="p-2 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-full">
-                    <PieChart className="h-5 w-5" />
+                    <Plus className="h-5 w-5" />
                   </button>
                   <button className="p-2 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-full">
-                    <LineChart className="h-5 w-5" />
+                    <Minus className="h-5 w-5" />
                   </button>
                   <button className="p-2 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-full">
-                    <Activity className="h-5 w-5" />
+                    <BarChart3 className="h-5 w-5" />
                   </button>
                 </div>
                 <div className="mt-4 space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Server Load</span>
-                    <span className="font-medium">{stats.systemMetrics.serverLoad}%</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Database Size</span>
-                    <span className="font-medium">{stats.systemMetrics.databaseSize}GB</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Network Status</span>
-                    <span className="font-medium">{stats.systemMetrics.networkStatus}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Last Backup</span>
+                    <span className="text-gray-500">Total Units</span>
                     <span className="font-medium">
-                      {new Date(stats.systemMetrics.lastBackup).toLocaleDateString()}
+                      {stats.bloodInventory.reduce((acc, item) => acc + item.quantity, 0)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500">Critical</span>
+                    <span className="font-medium">
+                      {stats.bloodInventory.filter((item) => item.status === 'critical').length}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500">Low Stock</span>
+                    <span className="font-medium">
+                      {stats.bloodInventory.filter((item) => item.status === 'low').length}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500">Storage Locations</span>
+                    <span className="font-medium">
+                      {new Set(stats.bloodInventory.map((item) => item.location)).size}
                     </span>
                   </div>
                 </div>
@@ -849,50 +924,31 @@ export default function AdminDashboard() {
           <Card className={getCardClass('blue')}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5" />
-                Analytics
+                <MapPin className="h-5 w-5" />
+                Location Services
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 <p className="text-gray-600 dark:text-gray-300">
-                  View detailed analytics and generate reports for better decision making.
+                  View nearby donors, manage pickup locations, and track deliveries.
                 </p>
                 <div className="flex items-center gap-2 mt-4">
                   <button className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded-full">
-                    <BarChart3 className="h-5 w-5" />
+                    <MapPin className="h-5 w-5" />
                   </button>
                   <button className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded-full">
-                    <PieChart className="h-5 w-5" />
+                    <Users className="h-5 w-5" />
                   </button>
                   <button className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded-full">
-                    <Download className="h-5 w-5" />
+                    <Activity className="h-5 w-5" />
                   </button>
                 </div>
                 <div className="mt-4 space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Daily Donations</span>
+                    <span className="text-gray-500">Total Locations</span>
                     <span className="font-medium">
-                      {stats.analytics.dailyDonations[stats.analytics.dailyDonations.length - 1]}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Weekly Donations</span>
-                    <span className="font-medium">
-                      {stats.analytics.weeklyDonations[stats.analytics.weeklyDonations.length - 1]}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Monthly Donations</span>
-                    <span className="font-medium">
-                      {stats.analytics.monthlyDonations[stats.analytics.monthlyDonations.length - 1]}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Top Blood Type</span>
-                    <span className="font-medium">
-                      {stats.analytics.bloodTypeDistribution?.[0]?.type || 'N/A'} (
-                      {stats.analytics.bloodTypeDistribution?.[0]?.percentage || 0}%)
+                      {stats.analytics.locationDistribution.length}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
@@ -901,6 +957,10 @@ export default function AdminDashboard() {
                       {stats.analytics.locationDistribution?.[0]?.location || 'N/A'} (
                       {stats.analytics.locationDistribution?.[0]?.percentage || 0}%)
                     </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500">Active Donors</span>
+                    <span className="font-medium">{stats.donorMetrics.activeDonors}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-500">Coverage</span>
@@ -922,4 +982,4 @@ export default function AdminDashboard() {
       </div>
     </div>
   );
-}
+} 
