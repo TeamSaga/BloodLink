@@ -18,6 +18,14 @@ import {
   Server,
   Network,
   Database,
+  Globe,
+  Mail,
+  MessageSquare,
+  HelpCircle,
+  AlertCircle,
+  Key,
+  Lock,
+  Activity,
 } from 'lucide-react';
 
 export default function AdminNavigation() {
@@ -36,7 +44,7 @@ export default function AdminNavigation() {
       </Link>
 
       {/* Main Navigation */}
-      <div className="flex-1 space-y-2">
+      <div className="space-y-2">
         <Link href="/dashboard/admin">
           <Button
             variant={isActive('/dashboard/admin') ? 'default' : 'ghost'}
@@ -97,6 +105,26 @@ export default function AdminNavigation() {
           </Button>
         </Link>
 
+        <Link href="/dashboard/admin/roles">
+          <Button
+            variant={isActive('/dashboard/admin/roles') ? 'default' : 'ghost'}
+            className="w-full justify-start gap-2"
+          >
+            <Key className="h-5 w-5" />
+            Role Management
+          </Button>
+        </Link>
+
+        <Link href="/dashboard/admin/permissions">
+          <Button
+            variant={isActive('/dashboard/admin/permissions') ? 'default' : 'ghost'}
+            className="w-full justify-start gap-2"
+          >
+            <Lock className="h-5 w-5" />
+            Permissions
+          </Button>
+        </Link>
+
         <Link href="/dashboard/admin/system">
           <Button
             variant={isActive('/dashboard/admin/system') ? 'default' : 'ghost'}
@@ -144,6 +172,66 @@ export default function AdminNavigation() {
           >
             <Bell className="h-5 w-5" />
             Notifications
+          </Button>
+        </Link>
+
+        <Link href="/dashboard/admin/communication">
+          <Button
+            variant={isActive('/dashboard/admin/communication') ? 'default' : 'ghost'}
+            className="w-full justify-start gap-2"
+          >
+            <MessageSquare className="h-5 w-5" />
+            Communication
+          </Button>
+        </Link>
+
+        <Link href="/dashboard/admin/email">
+          <Button
+            variant={isActive('/dashboard/admin/email') ? 'default' : 'ghost'}
+            className="w-full justify-start gap-2"
+          >
+            <Mail className="h-5 w-5" />
+            Email Templates
+          </Button>
+        </Link>
+
+        <Link href="/dashboard/admin/regions">
+          <Button
+            variant={isActive('/dashboard/admin/regions') ? 'default' : 'ghost'}
+            className="w-full justify-start gap-2"
+          >
+            <Globe className="h-5 w-5" />
+            Region Management
+          </Button>
+        </Link>
+
+        <Link href="/dashboard/admin/help">
+          <Button
+            variant={isActive('/dashboard/admin/help') ? 'default' : 'ghost'}
+            className="w-full justify-start gap-2"
+          >
+            <HelpCircle className="h-5 w-5" />
+            Help Center
+          </Button>
+        </Link>
+
+        <Link href="/dashboard/admin/alerts">
+          <Button
+            variant={isActive('/dashboard/admin/alerts') ? 'default' : 'ghost'}
+            className="w-full justify-start gap-2"
+          >
+            <AlertCircle className="h-5 w-5" />
+            System Alerts
+          </Button>
+        </Link>
+
+        <Link href="/dashboard/admin/activity">
+          <Button
+            variant={isActive('/dashboard/admin/activity') ? 'default' : 'ghost'}
+            className="w-full justify-start gap-2"
+          >
+            <Activity className="h-5 w-5" />
+            Activity Monitor
           </Button>
         </Link>
       </div>

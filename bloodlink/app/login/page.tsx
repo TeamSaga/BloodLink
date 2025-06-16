@@ -16,13 +16,31 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      await axios.post("/api/login", {
+      // TODO: Replace with actual API call
+      const response = await axios.post("/api/auth/login", {
         email,
         password,
       });
 
-      alert("Login successful.");
-      router.push("/");
+      // Store auth info
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('userRole', response.data.role);
+      localStorage.setItem('userEmail', email);
+
+      // Redirect based on role
+      switch (response.data.role) {
+        case 'donor':
+          router.push('/dashboard/donor');
+          break;
+        case 'hospital':
+          router.push('/dashboard/hospital');
+          break;
+        case 'admin':
+          router.push('/dashboard/admin');
+          break;
+        default:
+          setError('Invalid user role');
+      }
     } catch (err: any) {
       setError(
         err.response?.data?.error || "An error occurred. Please try again."
@@ -80,7 +98,7 @@ export default function Login() {
             </div>
 
             <p className="mt-4 text-sm text-center text-gray-600">
-              Dont't have an account?{" "}
+              Don't have an account?{" "}
               <Link href="/signup" className="text-blue-500 hover:underline">
                 Sign Up
               </Link>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Droplet, Heart, User, Building2 } from 'lucide-react';
+import { Droplet, Heart } from 'lucide-react';
 
 export default function PublicNavigation() {
   return (

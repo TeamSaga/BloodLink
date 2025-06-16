@@ -26,23 +26,22 @@ export default function Home() {
           Join our mission to connect blood donors with those in need. Every donation counts, and you can be someone's hero today.
         </p>
         <div className="flex gap-4 justify-center">
-          <Link href="/donate">
+          <Link href="/login">
             <Button size="lg" className="bg-red-600 hover:bg-red-700">
               <Heart className="mr-2 h-5 w-5" />
-              Donate Now
+              Get Started
             </Button>
           </Link>
-          <Link href="/find-blood">
+          <Link href="/about">
             <Button size="lg" variant="outline">
-              <Droplet className="mr-2 h-5 w-5" />
-              Find Blood
+              Learn More
             </Button>
           </Link>
         </div>
       </section>
 
       {/* Features Grid */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
         <Card className="hover:shadow-lg transition-shadow duration-300">
           <CardContent className="p-6">
             <Users className="h-12 w-12 text-red-500 mb-4" />
@@ -85,7 +84,7 @@ export default function Home() {
       </section>
 
       {/* How It Works */}
-      <section className="text-center space-y-8">
+      <section className="text-center space-y-8 px-4">
         <h2 className="text-3xl font-bold">How It Works</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-4">
@@ -121,12 +120,12 @@ export default function Home() {
       </section>
 
       {/* Call to Action */}
-      <section className="text-center space-y-6 py-16 bg-red-50 dark:bg-red-900/20 rounded-3xl">
+      <section className="text-center space-y-6 py-16 bg-red-50 dark:bg-red-950/20">
         <h2 className="text-3xl font-bold">Ready to Make a Difference?</h2>
         <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
           Join our community of lifesavers today and help those in need.
         </p>
-        <Link href="/register">
+        <Link href="/login">
           <Button size="lg" className="bg-red-600 hover:bg-red-700">
             Get Started
           </Button>

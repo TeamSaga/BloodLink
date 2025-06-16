@@ -17,6 +17,11 @@ import {
   LogOut,
   Building2,
   Megaphone,
+  ClipboardList,
+  AlertTriangle,
+  Truck,
+  TestTube,
+  Microscope,
 } from 'lucide-react';
 
 export default function HospitalNavigation() {
@@ -86,6 +91,46 @@ export default function HospitalNavigation() {
           </Button>
         </Link>
 
+        <Link href="/dashboard/hospital/screening">
+          <Button
+            variant={isActive('/dashboard/hospital/screening') ? 'default' : 'ghost'}
+            className="w-full justify-start gap-2"
+          >
+            <TestTube className="h-5 w-5" />
+            Blood Screening
+          </Button>
+        </Link>
+
+        <Link href="/dashboard/hospital/lab">
+          <Button
+            variant={isActive('/dashboard/hospital/lab') ? 'default' : 'ghost'}
+            className="w-full justify-start gap-2"
+          >
+            <Microscope className="h-5 w-5" />
+            Laboratory
+          </Button>
+        </Link>
+
+        <Link href="/dashboard/hospital/transport">
+          <Button
+            variant={isActive('/dashboard/hospital/transport') ? 'default' : 'ghost'}
+            className="w-full justify-start gap-2"
+          >
+            <Truck className="h-5 w-5" />
+            Transport
+          </Button>
+        </Link>
+
+        <Link href="/dashboard/hospital/emergency">
+          <Button
+            variant={isActive('/dashboard/hospital/emergency') ? 'default' : 'ghost'}
+            className="w-full justify-start gap-2"
+          >
+            <AlertTriangle className="h-5 w-5" />
+            Emergency
+          </Button>
+        </Link>
+
         <Link href="/dashboard/hospital/analytics">
           <Button
             variant={isActive('/dashboard/hospital/analytics') ? 'default' : 'ghost'}
@@ -103,6 +148,16 @@ export default function HospitalNavigation() {
           >
             <MapPin className="h-5 w-5" />
             Locations
+          </Button>
+        </Link>
+
+        <Link href="/dashboard/hospital/reports">
+          <Button
+            variant={isActive('/dashboard/hospital/reports') ? 'default' : 'ghost'}
+            className="w-full justify-start gap-2"
+          >
+            <ClipboardList className="h-5 w-5" />
+            Reports
           </Button>
         </Link>
 
